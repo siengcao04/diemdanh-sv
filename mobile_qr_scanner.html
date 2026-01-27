@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Điểm Danh Sinh Viên</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px 20px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .face-overlay {
+            position: absolute;
+            border: 3px solid #46d113;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(70, 209, 19, 0.5);
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status-waiting {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-detecting {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .student-info {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .student-info.show {
+            display: block;
+        }
+
+        .student-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+
+        .step.active .step-number {
+            background: #667eea;
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Điểm Danh Sinh Viên</h1>
+            <p>Quét QR Code và nhận diện khuôn mặt</p>
+        </div>
+
+        <div class="content">
+            <!-- Các bước -->
+            <div class="steps">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Quét QR</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Nhận diện</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Hoàn tất</div>
+                </div>
+            </div>
+
+            <!-- Thông tin -->
+            <div class="info-box">
+                <h3>🔍 Hướng dẫn</h3>
+                <p>1. Quét mã QR do giảng viên cung cấp<br>
+                   2. Cho phép truy cập camera<br>
+                   3. Đặt khuôn mặt vào khung hình<br>
+                   4. Chờ hệ thống xác nhận</p>
+            </div>
+
+            <!-- Trạng thái -->
+            <div id="status" class="status-message status-waiting">
+                ⏳ Đang chờ quét mã QR Code...
+            </div>
+
+            <!-- Video camera -->
+            <div class="video-container" style="display: none;" id="videoContainer">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+
+            <!-- Nút điều khiển -->
+            <button class="btn btn-primary" id="btnStart" onclick="batDauQuetQR()">
+                🔲 Quét Mã QR Code
+            </button>
+
+            <button class="btn btn-success" id="btnFace" style="display: none;" onclick="batDauNhanDien()">
+                📸 Bắt Đầu Nhận Diện Khuôn Mặt
+            </button>
+
+            <!-- Thông tin sinh viên -->
+            <div class="student-info" id="studentInfo">
+                <div class="student-avatar">👤</div>
+                <h3 id="studentName">Nguyễn Văn A</h3>
+                <p id="studentId">Mã SV: B2016001</p>
+                <p id="className">Lớp: CNTT01</p>
+                <p style="color: #28a745; font-weight: bold; margin-top: 15px;">
+                    ✅ Điểm danh thành công!
+                </p>
+                <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                    Thời gian: <span id="timestamp"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        let sessionCode = null;
+
+        // Giả lập quét QR Code
+        function batDauQuetQR() {
+            // Trong thực tế sẽ sử dụng thư viện jsQR hoặc HTML5-QRCode
+            document.getElementById('status').className = 'status-message status-detecting';
+            document.getElementById('status').textContent = '🔍 Đang quét mã QR...';
+            
+            // Giả lập quét thành công sau 2 giây
+            setTimeout(() => {
+                sessionCode = 'CNTT01_' + Date.now();
+                document.getElementById('status').className = 'status-message status-success';
+                document.getElementById('status').textContent = '✅ Đã quét QR thành công! Phiên: ' + sessionCode.substring(0, 20) + '...';
+                
+                document.getElementById('btnStart').style.display = 'none';
+                document.getElementById('btnFace').style.display = 'block';
+                
+                // Cập nhật bước
+                document.getElementById('step1').classList.add('completed');
+                document.getElementById('step2').classList.add('active');
+            }, 2000);
+        }
+
+        // Bắt đầu nhận diện khuôn mặt
+        async function batDauNhanDien() {
+            document.getElementById('status').className = 'status-message status-detecting';
+            document.getElementById('status').textContent = '📸 Đang mở camera...';
+            
+            try {
+                // Yêu cầu truy cập camera
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' } 
+                });
+                
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                
+                document.getElementById('videoContainer').style.display = 'block';
+                document.getElementById('btnFace').style.display = 'none';
+                
+                document.getElementById('status').textContent = '🎯 Đặt khuôn mặt vào khung hình...';
+                
+                // Giả lập nhận diện khuôn mặt sau 3 giây
+                setTimeout(() => {
+                    nhanDienThanhCong();
+                }, 3000);
+                
+            } catch (error) {
+                document.getElementById('status').className = 'status-message status-error';
+                document.getElementById('status').textContent = '❌ Không thể truy cập camera: ' + error.message;
+            }
+        }
+
+        // Nhận diện thành công
+        function nhanDienThanhCong() {
+            // Dừng camera
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('videoContainer').style.display = 'none';
+            document.getElementById('status').className = 'status-message status-success';
+            document.getElementById('status').textContent = '✅ Nhận diện khuôn mặt thành công!';
+            
+            // Hiển thị thông tin sinh viên
+            document.getElementById('studentInfo').classList.add('show');
+            document.getElementById('timestamp').textContent = new Date().toLocaleString('vi-VN');
+            
+            // Cập nhật bước
+            document.getElementById('step2').classList.add('completed');
+            document.getElementById('step3').classList.add('active');
+            document.getElementById('step3').classList.add('completed');
+            
+            // Gửi dữ liệu lên server (trong thực tế)
+            guiDuLieuDiemDanh();
+        }
+
+        // Gửi dữ liệu điểm danh lên server
+        function guiDuLieuDiemDanh() {
+            // Trong thực tế sẽ gọi API
+            const data = {
+                sessionCode: sessionCode,
+                maSV: 'B2016001',
+                tenSV: 'Nguyễn Văn A',
+                timestamp: new Date().toISOString(),
+                faceData: 'base64_encoded_face_image'
+            };
+            
+            console.log('Đang gửi dữ liệu điểm danh:', data);
+            
+            // fetch('/api/diemdanh', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // });
+        }
+    </script>
+</body>
+</html>
