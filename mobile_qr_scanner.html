@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📱 Điểm Danh Sinh Viên</title>
+    <title> Điểm Danh Sinh Viên</title>
     <style>
         * {
             margin: 0;
@@ -237,7 +237,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📱 Điểm Danh Sinh Viên</h1>
+            <h1> Điểm Danh Sinh Viên</h1>
             <p>Quét QR Code và nhận diện khuôn mặt</p>
         </div>
 
@@ -260,7 +260,7 @@
 
             <!-- Thông tin -->
             <div class="info-box">
-                <h3>🔍 Hướng dẫn</h3>
+                <h3> Hướng dẫn</h3>
                 <p>1. Quét mã QR do giảng viên cung cấp<br>
                    2. Cho phép truy cập camera<br>
                    3. Đặt khuôn mặt vào khung hình<br>
@@ -269,7 +269,7 @@
 
             <!-- Trạng thái -->
             <div id="status" class="status-message status-waiting">
-                ⏳ Đang chờ quét mã QR Code...
+                 Đang chờ quét mã QR Code...
             </div>
 
             <!-- Video camera -->
@@ -280,21 +280,21 @@
 
             <!-- Nút điều khiển -->
             <button class="btn btn-primary" id="btnStart" onclick="batDauQuetQR()">
-                🔲 Quét Mã QR Code
+                Quét Mã QR Code
             </button>
 
             <button class="btn btn-success" id="btnFace" style="display: none;" onclick="batDauNhanDien()">
-                📸 Bắt Đầu Nhận Diện Khuôn Mặt
+                 Bắt Đầu Nhận Diện Khuôn Mặt
             </button>
 
             <!-- Thông tin sinh viên -->
             <div class="student-info" id="studentInfo">
-                <div class="student-avatar">👤</div>
+                <div class="student-avatar"></div>
                 <h3 id="studentName">Nguyễn Văn A</h3>
                 <p id="studentId">Mã SV: B2016001</p>
                 <p id="className">Lớp: CNTT01</p>
                 <p style="color: #28a745; font-weight: bold; margin-top: 15px;">
-                    ✅ Điểm danh thành công!
+                     Điểm danh thành công!
                 </p>
                 <p style="font-size: 14px; color: #666; margin-top: 10px;">
                     Thời gian: <span id="timestamp"></span>
@@ -311,7 +311,7 @@
         function batDauQuetQR() {
             // Trong thực tế sẽ sử dụng thư viện jsQR hoặc HTML5-QRCode
             document.getElementById('status').className = 'status-message status-detecting';
-            document.getElementById('status').textContent = '🔍 Đang quét mã QR...';
+            document.getElementById('status').textContent = ' Đang quét mã QR...';
             
             // Giả lập quét thành công sau 2 giây
             setTimeout(() => {
@@ -331,7 +331,7 @@
         // Bắt đầu nhận diện khuôn mặt
         async function batDauNhanDien() {
             document.getElementById('status').className = 'status-message status-detecting';
-            document.getElementById('status').textContent = '📸 Đang mở camera...';
+            document.getElementById('status').textContent = ' Đang mở camera...';
             
             try {
                 // Yêu cầu truy cập camera
@@ -345,7 +345,7 @@
                 document.getElementById('videoContainer').style.display = 'block';
                 document.getElementById('btnFace').style.display = 'none';
                 
-                document.getElementById('status').textContent = '🎯 Đặt khuôn mặt vào khung hình...';
+                document.getElementById('status').textContent = ' Đặt khuôn mặt vào khung hình...';
                 
                 // Giả lập nhận diện khuôn mặt sau 3 giây
                 setTimeout(() => {
@@ -354,7 +354,7 @@
                 
             } catch (error) {
                 document.getElementById('status').className = 'status-message status-error';
-                document.getElementById('status').textContent = '❌ Không thể truy cập camera: ' + error.message;
+                document.getElementById('status').textContent = ' Không thể truy cập camera: ' + error.message;
             }
         }
 
@@ -367,7 +367,7 @@
             
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('status').className = 'status-message status-success';
-            document.getElementById('status').textContent = '✅ Nhận diện khuôn mặt thành công!';
+            document.getElementById('status').textContent = ' Nhận diện khuôn mặt thành công!';
             
             // Hiển thị thông tin sinh viên
             document.getElementById('studentInfo').classList.add('show');
