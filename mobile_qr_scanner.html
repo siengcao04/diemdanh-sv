@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Điểm Danh Sinh Viên</title>
+    <title>Điểm Danh Sinh Viên</title>
     <style>
         * {
             margin: 0;
@@ -237,7 +237,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1> Điểm Danh Sinh Viên</h1>
+            <h1>📱 Điểm Danh Sinh Viên</h1>
             <p>Quét QR Code và nhận diện khuôn mặt</p>
         </div>
 
@@ -260,6 +260,11 @@
 
             <!-- Thông tin -->
             <div class="info-box">
+                <h3> Thông tin phiên điểm danh</h3>
+                <p id="sessionInfo">Chưa quét mã QR</p>
+            </div>
+
+            <div class="info-box">
                 <h3> Hướng dẫn</h3>
                 <p>1. Quét mã QR do giảng viên cung cấp<br>
                    2. Cho phép truy cập camera<br>
@@ -269,7 +274,7 @@
 
             <!-- Trạng thái -->
             <div id="status" class="status-message status-waiting">
-                 Đang chờ quét mã QR Code...
+                Đang chờ quét mã QR Code...
             </div>
 
             <!-- Video camera -->
@@ -313,11 +318,37 @@
             document.getElementById('status').className = 'status-message status-detecting';
             document.getElementById('status').textContent = ' Đang quét mã QR...';
             
+            // Lấy session code từ URL (nếu có)
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionFromURL = urlParams.get('session');
+            
             // Giả lập quét thành công sau 2 giây
             setTimeout(() => {
-                sessionCode = 'CNTT01_' + Date.now();
-                document.getElementById('status').className = 'status-message status-success';
-                document.getElementById('status').textContent = '✅ Đã quét QR thành công! Phiên: ' + sessionCode.substring(0, 20) + '...';
+                if (sessionFromURL) {
+                    sessionCode = sessionFromURL;
+                    
+                    // Phân tích session code để lấy thông tin lớp
+                    const parts = sessionCode.split('_');
+                    const maLop = parts[0]; // VD: CNTT01
+                    
+                    document.getElementById('status').className = 'status-message status-success';
+                    document.getElementById('status').textContent = ' Đã quét QR thành công!';
+                    
+                    // Hiển thị thông tin phiên
+                    document.getElementById('sessionInfo').innerHTML = 
+                        `<strong>Mã phiên:</strong> ${sessionCode}<br>` +
+                        `<strong>Lớp:</strong> ${maLop}<br>` +
+                        `<strong>Thời gian:</strong> ${new Date().toLocaleString('vi-VN')}`;
+                } else {
+                    sessionCode = 'DEMO_' + Date.now();
+                    document.getElementById('status').className = 'status-message status-success';
+                    document.getElementById('status').textContent = 'Đã quét QR thành công! (Demo)';
+                    
+                    document.getElementById('sessionInfo').innerHTML = 
+                        `<strong>Mã phiên:</strong> ${sessionCode}<br>` +
+                        `<strong>Chế độ:</strong> Demo<br>` +
+                        ` <em>Trong thực tế, thông tin lớp sẽ hiển thị ở đây</em>`;
+                }
                 
                 document.getElementById('btnStart').style.display = 'none';
                 document.getElementById('btnFace').style.display = 'block';
@@ -331,7 +362,7 @@
         // Bắt đầu nhận diện khuôn mặt
         async function batDauNhanDien() {
             document.getElementById('status').className = 'status-message status-detecting';
-            document.getElementById('status').textContent = ' Đang mở camera...';
+            document.getElementById('status').textContent = 'Đang mở camera...';
             
             try {
                 // Yêu cầu truy cập camera
@@ -345,7 +376,7 @@
                 document.getElementById('videoContainer').style.display = 'block';
                 document.getElementById('btnFace').style.display = 'none';
                 
-                document.getElementById('status').textContent = ' Đặt khuôn mặt vào khung hình...';
+                document.getElementById('status').textContent = 'Đặt khuôn mặt vào khung hình...';
                 
                 // Giả lập nhận diện khuôn mặt sau 3 giây
                 setTimeout(() => {
@@ -354,7 +385,7 @@
                 
             } catch (error) {
                 document.getElementById('status').className = 'status-message status-error';
-                document.getElementById('status').textContent = ' Không thể truy cập camera: ' + error.message;
+                document.getElementById('status').textContent = 'Không thể truy cập camera: ' + error.message;
             }
         }
 
@@ -367,9 +398,28 @@
             
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('status').className = 'status-message status-success';
-            document.getElementById('status').textContent = ' Nhận diện khuôn mặt thành công!';
+            document.getElementById('status').textContent = 'Nhận diện khuôn mặt thành công!';
+            
+            // Lấy thông tin sinh viên từ QR Code hoặc giả lập
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionCode = urlParams.get('session') || 'DEMO_SESSION';
+            
+            // GIẢLẬP: Lấy thông tin sinh viên ngẫu nhiên
+            const danhSachSinhVien = [
+                { maSV: 'B2016001', tenSV: 'Nguyễn Văn An', lop: 'CNTT01' },
+                { maSV: 'B2016002', tenSV: 'Trần Thị Bình', lop: 'CNTT01' },
+                { maSV: 'B2016003', tenSV: 'Lê Văn Cường', lop: 'CNTT01' },
+                { maSV: 'B2016004', tenSV: 'Phạm Thị Dung', lop: 'CNTT02' },
+                { maSV: 'B2016005', tenSV: 'Hoàng Văn Em', lop: 'CNTT02' }
+            ];
+            
+            // Chọn ngẫu nhiên 1 sinh viên
+            const randomStudent = danhSachSinhVien[Math.floor(Math.random() * danhSachSinhVien.length)];
             
             // Hiển thị thông tin sinh viên
+            document.getElementById('studentName').textContent = randomStudent.tenSV;
+            document.getElementById('studentId').textContent = 'Mã SV: ' + randomStudent.maSV;
+            document.getElementById('className').textContent = 'Lớp: ' + randomStudent.lop;
             document.getElementById('studentInfo').classList.add('show');
             document.getElementById('timestamp').textContent = new Date().toLocaleString('vi-VN');
             
@@ -379,26 +429,45 @@
             document.getElementById('step3').classList.add('completed');
             
             // Gửi dữ liệu lên server (trong thực tế)
-            guiDuLieuDiemDanh();
+            guiDuLieuDiemDanh(randomStudent);
         }
 
         // Gửi dữ liệu điểm danh lên server
-        function guiDuLieuDiemDanh() {
+        function guiDuLieuDiemDanh(sinhVien) {
             // Trong thực tế sẽ gọi API
             const data = {
                 sessionCode: sessionCode,
-                maSV: 'B2016001',
-                tenSV: 'Nguyễn Văn A',
+                maSV: sinhVien.maSV,
+                tenSV: sinhVien.tenSV,
+                maLop: sinhVien.lop,
                 timestamp: new Date().toISOString(),
                 faceData: 'base64_encoded_face_image'
             };
             
             console.log('Đang gửi dữ liệu điểm danh:', data);
+            console.log('Trong thực tế, dữ liệu này sẽ gửi đến server');
+            console.log('Desktop app sẽ nhận được và cập nhật danh sách');
             
+            // GIẢ LẬP: Thông báo đã gửi thành công
+            setTimeout(() => {
+                alert(' Đã gửi thông tin điểm danh!\n\n' +
+                      'Sinh viên: ' + sinhVien.tenSV + '\n' +
+                      'Mã SV: ' + sinhVien.maSV + '\n\n' +
+                      'Trong hệ thống thật, Desktop app sẽ nhận được thông tin này ngay lập tức.');
+            }, 500);
+            
+            // TRONG THỰC TẾ: Gọi API
             // fetch('/api/diemdanh', {
             //     method: 'POST',
             //     headers: { 'Content-Type': 'application/json' },
             //     body: JSON.stringify(data)
+            // })
+            // .then(response => response.json())
+            // .then(result => {
+            //     console.log('✅ Điểm danh thành công:', result);
+            // })
+            // .catch(error => {
+            //     console.error('❌ Lỗi:', error);
             // });
         }
     </script>
